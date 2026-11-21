@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lisdexamfetamine plasma model</title>
+<style>
+:root{--bg:#f5f4ef;--surface-1:#fcfcfb;--surface-2:#ffffff;--text-primary:#0b0b0b;--text-secondary:#52514e;--text-muted:#898781;--border:rgba(11,11,11,0.10);--border-strong:rgba(11,11,11,0.2);--border-stronger:rgba(11,11,11,0.4);--grid:#e1e0d9;--s1:#2a78d6;--s2:#eb6834}
+@media (prefers-color-scheme: dark){:root{--bg:#141413;--surface-1:#1a1a19;--surface-2:#1f1f1e;--text-primary:#f0efec;--text-secondary:#c3c2b7;--text-muted:#898781;--border:rgba(255,255,255,0.10);--border-strong:rgba(255,255,255,0.2);--border-stronger:rgba(255,255,255,0.4);--grid:#2c2c2a;--s1:#3987e5;--s2:#d95926}}
+:root[data-theme=light]{--bg:#f5f4ef;--surface-1:#fcfcfb;--surface-2:#ffffff;--text-primary:#0b0b0b;--text-secondary:#52514e;--border:rgba(11,11,11,0.10);--border-strong:rgba(11,11,11,0.2);--border-stronger:rgba(11,11,11,0.4);--grid:#e1e0d9;--s1:#2a78d6;--s2:#eb6834}
+:root[data-theme=dark]{--bg:#141413;--surface-1:#1a1a19;--surface-2:#1f1f1e;--text-primary:#f0efec;--text-secondary:#c3c2b7;--border:rgba(255,255,255,0.10);--border-strong:rgba(255,255,255,0.2);--border-stronger:rgba(255,255,255,0.4);--grid:#2c2c2a;--s1:#3987e5;--s2:#d95926}
+*{box-sizing:border-box;min-width:0}
+body{overflow-x:clip}
+body{margin:0;background:var(--bg);color:var(--text-primary);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.5}
+main{max-width:860px;margin:0 auto;padding:24px 16px 40px}
+h1{font-size:22px;font-weight:500;margin:0 0 4px}
+.sub{font-size:14px;color:var(--text-secondary);margin:0 0 20px}
+.card{background:var(--surface-2);border:0.5px solid var(--border);border-radius:12px;padding:16px}
+.row{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text-secondary);margin-bottom:10px;flex-wrap:wrap}
+.row label,.row .lbl{width:56px}
+.row input[type=range]{flex:1;min-width:120px;accent-color:var(--s1)}
+.val{width:64px;text-align:right;font-weight:500;color:var(--text-primary)}
+button,select{font:inherit;font-size:13px;color:var(--text-primary);background:transparent;border:0.5px solid var(--border-strong);border-radius:8px;padding:6px 12px;min-height:36px;cursor:pointer}
+button.on{background:var(--surface-1);border-color:var(--border-stronger);font-weight:500}
+select{flex:1;min-width:120px;max-width:200px}
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:6px 0 14px}
+.tile{background:var(--surface-1);border-radius:8px;padding:10px 12px}
+.tile .k{font-size:12px;color:var(--text-muted)}
+.tile .v{font-size:20px;font-weight:500}
+.lg{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12px;color:var(--text-secondary);margin-bottom:8px}
+.lg span{display:flex;align-items:center;gap:6px}
+.chart{position:relative;width:100%;height:380px}
+.note{font-size:12px;color:var(--text-muted);margin-top:8px}
+.assume{font-size:13px;color:var(--text-secondary);margin-top:20px}
+.assume h2{font-size:16px;font-weight:500;color:var(--text-primary);margin:0 0 6px}
+.assume ul{margin:0;padding-left:18px}
+</style>
+</head>
+<body>
+<main>
+<h1>Lisdexamfetamine: plasma d-amphetamine over 24 hours</h1>
+<p class="sub">One-off dose versus daily use at steady state, with log-normal half-life percentile lines.</p>
+
+<div class="card">
+  <div class="row"><label for="dose">Dose</label><input type="range" id="dose" min="20" max="70" step="10" value="60"><span class="val" id="doseo">60 mg</span></div>
+  <div class="row"><label for="wt">Weight</label><input type="range" id="wt" min="40" max="120" step="0.5" value="63.5"><span class="val" id="wto">63.5 kg</span></div>
+  <div class="row"><span class="lbl">Spread</span>
+    <div id="reg" style="display:flex;gap:6px;"><button data-r="0" class="on">One-off</button><button data-r="1">Daily use</button></div>
+    <select id="sd" aria-label="Half-life standard deviation">
+      <option value="0.180,2.382">SD 2 h</option>
+      <option value="0.2244,2.3727" selected>SD 2.5 h</option>
+      <option value="0.268,2.362">SD 3 h</option>
+    </select>
+  </div>
+
+  <div class="tiles">
+    <div class="tile"><div class="k" id="pl">Median peak</div><div class="v" id="pk">–</div></div>
+    <div class="tile"><div class="k">Peak, 16.67th–83.33rd</div><div class="v" id="pr">–</div></div>
+  </div>
+
+  <div class="lg">
+    <span><span style="width:18px;border-top:2px solid var(--s1);"></span>One-off, median</span>
+    <span><span style="width:18px;border-top:2px dashed var(--s2);"></span>Daily, median</span>
+    <span><span style="width:22px;border-top:1.5px dashed var(--text-muted);"></span>33.33rd and 66.67th</span>
+    <span><svg width="22" height="4" aria-hidden="true"><line x1="0" y1="2" x2="22" y2="2" stroke="#898781" stroke-width="1.5" stroke-dasharray="7 3 2 3"/></svg>16.67th and 83.33rd</span>
+    <span><span style="width:22px;border-top:1.5px dotted var(--text-muted);"></span>2.5th and 97.5th</span>
+  </div>
+
+  <div class="chart"><canvas id="c" role="img" aria-label="Line chart of plasma d-amphetamine from 0 to 24 hours with median curves for one-off and daily dosing and six percentile lines for half-life variation">Median curves with half-life percentile lines above and below.</canvas></div>
+  <div class="note" id="hl"></div>
+</div>
+
+<div class="assume">
+  <h2>Model assumptions</h2>
+  <ul>
+    <li>One-compartment model, first-order absorption (ka 0.7 /h), peak about 3.5–4 h after the dose.</li>
+    <li>Half-life log-normal: median 10.73 h, mean 11.0 h; SD variants 2 h (σ 0.180, μ 2.382), 2.5 h (σ 0.224, μ 2.373), 3 h (σ 0.268, μ 2.362).</li>
+    <li>Volume of distribution 3.2 L/kg; 29.48% of the dose by weight becomes d-amphetamine.</li>
+    <li>Daily use assumes the same dose time every 24 h, at steady state.</li>
+    <li>Only half-life varies between the lines. Real variation, for example from urine pH and kidney function, is wider. Illustrative only, not for dosing decisions.</li>
+  </ul>
+</div>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+(function(){
+const KA=0.7,VKG=3.2,SALT=0.2948,TAU=24;
+const Z=[-1.96,-0.9674,-0.4307,0,0.4307,0.9674,1.96];
+const pn=['2.5th','16.67th','33.33rd','median','66.67th','83.33rd','97.5th'];
+const dash=[[2,3],[7,3,2,3],[5,4],null,[5,4],[7,3,2,3],[2,3]];
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const names=['One-off','Daily'];
+const ts=[];for(let i=0;i<=96;i++)ts.push(i/4);
+function conc(t,d,w,hl,r){
+  const ke=Math.LN2/hl,a=d*SALT*1000/(VKG*w)*KA/(KA-ke);
+  return r?a*(Math.exp(-ke*t)/(1-Math.exp(-ke*TAU))-Math.exp(-KA*t)/(1-Math.exp(-KA*TAU)))
+          :a*(Math.exp(-ke*t)-Math.exp(-KA*t));
+}
+let reg=0;
+const de=document.getElementById('dose'),we=document.getElementById('wt'),sd=document.getElementById('sd');
+const grid=css('--grid'),tick=css('--text-muted');
+const ch=new Chart(document.getElementById('c'),{type:'line',data:{datasets:[]},
+  options:{responsive:true,maintainAspectRatio:false,animation:false,interaction:{mode:'index',intersect:false},
+    plugins:{legend:{display:false},tooltip:{itemSort:(a,b)=>b.parsed.y-a.parsed.y,
+      callbacks:{title:i=>(+i[0].parsed.x.toFixed(2))+' h after dose',label:c=>c.dataset.label+': '+Math.round(c.parsed.y)+' ng/mL'}}},
+    scales:{
+      x:{type:'linear',min:0,max:24,grid:{display:false},border:{color:grid},ticks:{color:tick,stepSize:4,font:{size:11}},title:{display:true,text:'Hours after dose',color:tick,font:{size:12}}},
+      y:{min:0,grid:{color:grid},border:{display:false},ticks:{color:tick,font:{size:11}},title:{display:true,text:'Plasma d-amphetamine (ng/mL)',color:tick,font:{size:12}}}}}});
+function upd(){
+  const col=[css('--s1'),css('--s2')],g=css('--grid');
+  ch.options.scales.y.grid.color=g;ch.options.scales.x.border.color=g;
+  const d=+de.value,w=+we.value,p=sd.value.split(','),sg=+p[0],mu=+p[1];
+  document.getElementById('doseo').textContent=d+' mg';
+  document.getElementById('wto').textContent=w.toFixed(1)+' kg';
+  const hls=Z.map(z=>Math.exp(mu+z*sg)),ds=[],pk=[];let top=0;
+  hls.forEach((h,i)=>{
+    const pts=ts.map(t=>({x:t,y:conc(t,d,w,h,reg)}));
+    const m=Math.max(...pts.map(q=>q.y));pk.push(m);top=Math.max(top,m);
+    const med=i===3;
+    ds.push({label:names[reg]+' '+pn[i],data:pts,borderColor:col[reg],backgroundColor:col[reg],
+      borderWidth:med?2.5:1.5,borderDash:med?(reg?[10,4]:[]):dash[i],pointRadius:0,pointHoverRadius:3,tension:0.3});
+  });
+  const o=1-reg,op=ts.map(t=>({x:t,y:conc(t,d,w,hls[3],o)}));
+  top=Math.max(top,...op.map(q=>q.y));
+  ds.push({label:names[o]+' median',data:op,borderColor:col[o],backgroundColor:col[o],borderWidth:2.5,
+    borderDash:o?[10,4]:[],pointRadius:0,pointHoverRadius:3,tension:0.3});
+  ch.data.datasets=ds;ch.options.scales.y.max=Math.ceil(top*1.05/20)*20;ch.update();
+  document.getElementById('pl').textContent='Median peak, '+names[reg].toLowerCase();
+  document.getElementById('pk').textContent=Math.round(pk[3])+' ng/mL';
+  document.getElementById('pr').textContent=Math.round(pk[1])+'–'+Math.round(pk[5])+' ng/mL';
+  document.getElementById('hl').textContent='Half-lives drawn, lowest to highest percentile: '+hls.map(h=>h.toFixed(1)).join(', ')+' h.';
+}
+document.querySelectorAll('#reg button').forEach(b=>b.addEventListener('click',()=>{
+  reg=+b.dataset.r;document.querySelectorAll('#reg button').forEach(x=>x.classList.toggle('on',x===b));upd();}));
+de.addEventListener('input',upd);we.addEventListener('input',upd);sd.addEventListener('change',upd);
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',upd);
+const themeObs=new MutationObserver(upd);themeObs.observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+upd();
+})();
+</script>
+</body>
+</html>
