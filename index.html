@@ -71,6 +71,17 @@ select{flex:1;min-width:120px;max-width:200px}
 </div>
 
 <div class="assume">
+  <h2>Which SD setting to use</h2>
+  <p style="margin:0 0 6px;">How much half-life varies between people isn't known precisely, so the SD menu offers three settings as a sensitivity test. If a conclusion holds across all three, that uncertainty doesn't matter much.</p>
+  <ul>
+    <li><strong>SD 2 h:</strong> about what controlled studies of healthy volunteers show (roughly 20% variation). Best supported for adults with normal kidney function who aren't taking medications that change urine pH.</li>
+    <li><strong>SD 2.5 h (default):</strong> a judgement call between the volunteer data and a broader population, not a published figure.</li>
+    <li><strong>SD 3 h:</strong> roughly what might be expected once people taking medications that affect urine pH are included.</li>
+  </ul>
+  <p style="margin:6px 0 0;">The lines show variation between people. For one person, they show the range their typical half-life likely falls in; their own day-to-day variation is smaller, perhaps a third to half of this spread.</p>
+</div>
+
+<div class="assume">
   <h2>Model assumptions</h2>
   <ul>
     <li>One-compartment model, first-order absorption (ka 0.7 /h), peak about 3.5–4 h after the dose.</li>
@@ -79,6 +90,7 @@ select{flex:1;min-width:120px;max-width:200px}
     <li>Daily use assumes the same dose time every 24 h, at steady state.</li>
     <li>Only half-life varies between the lines. Real variation, for example from urine pH and kidney function, is wider. Illustrative only, not for dosing decisions.</li>
   </ul>
+  <p style="margin:12px 0 0;"><a href="https://github.com/MountainVagabond/lisdexamfetamine-model#readme" style="color:var(--s1);">Read the full notes on GitHub</a>: how to read the lines, the formula, and the model's limitations.</p>
 </div>
 </main>
 
